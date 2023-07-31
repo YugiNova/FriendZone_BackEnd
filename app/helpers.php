@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
             $status
         );
         if($token){
-            $response = $response->cookie('token',$token);
+            $response = $response->withCookie(cookie('token',$token,60*24*365));
         }
         
         return $response;

@@ -73,4 +73,20 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     {
         return [];
     }
+
+    public function profile(){
+        return $this->hasOne(UserContact::class,'user_id');
+    }
+
+    public function contacts(){
+        return $this->hasMany(UserContact::class,'user_id');
+    }
+
+    public function works_educations(){
+        return $this->hasMany(UserContact::class,'user_id');
+    }
+
+    public function places(){
+        return $this->hasMany(UserContact::class,'user_id');
+    }
 }

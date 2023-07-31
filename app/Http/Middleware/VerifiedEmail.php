@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Exceptions\AuthException;
 use Closure;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,12 +18,15 @@ class VerifiedEmail
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user();
-        if(is_null($user['email_verified_at'])){
-            return response([
-                "message" => "User's email is not verified"
-            ]);
+        try {
+            $user = Auth::user();
+            if(is_null($user['email_verified_at'])){
+                throw new Exception("Account is not verified");
+            }
+        } catch (\Exception $e) {
+            throw new AuthException($e);
         }
+        
         return $next($request);
     }
 }
