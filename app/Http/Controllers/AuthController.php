@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth;
+use Illuminate\Support\Str;
 
 use function App\Helper\custom_response;
 
@@ -158,7 +159,7 @@ class AuthController extends Controller
             }
 
             //Return password_reset_token by hash email and JWT_SECRET
-            $token = Hash::make($request->email.env('JWT_SECRET'));
+            $token = Str::uuid()->toString();
 
             //Add token to table password_reset_tokens in database
             DB::table('password_reset_tokens')->insert([
@@ -166,7 +167,7 @@ class AuthController extends Controller
                 'token' => $token
             ]);
 
-            $url = route('auth.password.reset.link').'?id='.$user['id'].'&token='.$token;
+            $url = route('auth.password.reset.link',['id'=>$user['id'],'token'=>$token]);
             Mail::to($user['email'])->send(new ResetPassword($url, $user['display_name']));
 
             return custom_response("Send reset password email successfull",$url);
@@ -190,7 +191,6 @@ class AuthController extends Controller
                 throw new Exception("Token or User is invalid");
             }
             
-            // return custom_response("Password reset is accepted");
             return redirect(env('FRONTEND_URL')."/update-password/$id/$token");
             // return redirect(env('FRONTEND_URL'));
         } catch (\Exception $e) {
