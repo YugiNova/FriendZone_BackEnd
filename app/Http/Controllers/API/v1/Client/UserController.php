@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API\v1\Client;
 
 use App\Exceptions\UserException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ContactRequest;
 use App\Models\User;
+use App\Models\UserContact;
 use App\Models\UserProfile;
 use Exception;
 use Illuminate\Http\Request;
@@ -59,6 +61,22 @@ class UserController extends Controller
             $userProfile = UserProfile::where('user_id',$user->id)->update(['color'=>$color]);
 
             return custom_response("Update color to $color successfull",$user->profile);
+        } catch (\Exception $e) {
+            throw new UserException($e);
+        }
+    }
+
+    public function createContact(ContactRequest $request){
+        try {
+            $user = UserContact::create([
+                'user_id' => $request->user_id,
+                'content' => $request->content,
+                'type' => $request->type,
+                'status' => $request->status
+            ]);
+            
+
+            return custom_response("Create contact successfull");
         } catch (\Exception $e) {
             throw new UserException($e);
         }
