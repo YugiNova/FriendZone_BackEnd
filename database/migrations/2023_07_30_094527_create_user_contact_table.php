@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign("user_id")->references("id")->on("users")->onDelete("cascade");;
             $table->string("content",255);
             $table->string("type",10);
+            $table->string("status",10)->default("public");
             $table->timestamps();
         });
     }

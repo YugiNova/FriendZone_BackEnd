@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('avatar_url',512)->nullable();
             $table->string('status',20);
+            $table->string('slug',255)->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

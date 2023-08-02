@@ -1,26 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\v1;
 
 use App\Exceptions\AuthException;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Mail\ResetPassword;
-use App\Mail\SendMail;
 use App\Mail\VerifyEmail;
 use App\Models\User;
 use App\Models\UserProfile;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Http\Respone;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Tymon\JWTAuth;
 use Illuminate\Support\Str;
 
 use function App\Helper\custom_response;
@@ -49,8 +45,10 @@ class AuthController extends Controller
     public function checkLogin(Request $request){
         try {
             $user = Auth::user();
+            $userDB = User::find($user['id']);
+            $userProfile = $userDB->profile;
     
-            return custom_response("User is already login",$user);
+            return custom_response("User is already login",$userDB);
         } catch (\Exception $e) {
             throw new AuthException($e);
         }
@@ -73,8 +71,10 @@ class AuthController extends Controller
             $userProfile = UserProfile::create([
                 'user_id' => $user->id,
                 'gender' => $request->gender,
-                'dob' => $request->dob
+                'dob' => $request->dob,
+                
             ]);
+            $slug = $user->update(['slug'=>$userProfile->id]);
             DB::commit();
             return custom_response("Register successfull");
         } catch (\Exception $e) {

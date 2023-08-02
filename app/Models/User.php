@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -31,7 +32,8 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         'password',
         'avatar_url',
         'role',
-        'status'
+        'status',
+        'slug'
     ];
 
     /**
@@ -74,8 +76,8 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         return [];
     }
 
-    public function profile(){
-        return $this->hasOne(UserContact::class,'user_id');
+    public function profile():HasOne{
+        return $this->hasOne(UserProfile::class,'user_id');
     }
 
     public function contacts(){
@@ -83,10 +85,10 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     }
 
     public function works_educations(){
-        return $this->hasMany(UserContact::class,'user_id');
+        return $this->hasMany(UserWorkEducation::class,'user_id');
     }
 
     public function places(){
-        return $this->hasMany(UserContact::class,'user_id');
+        return $this->hasMany(UserPlace::class,'user_id');
     }
 }

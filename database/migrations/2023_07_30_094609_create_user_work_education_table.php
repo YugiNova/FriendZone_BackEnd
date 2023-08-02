@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string("type",50);
             $table->string("year_start",10);
             $table->string("year_end",10)->default("now");
+            $table->string("status",10)->default("public");
             $table->timestamps();
         });
     }

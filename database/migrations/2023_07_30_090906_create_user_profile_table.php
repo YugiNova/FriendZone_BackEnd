@@ -21,6 +21,8 @@ return new class extends Migration
             $table->text("introduce")->nullable();
             $table->unsignedInteger("friends_count")->default(0);
             $table->unsignedInteger("followers_count")->default(0);
+            $table->string("theme",10)->default("light");
+            $table->string("color",10)->default("#CE4410");
             $table->timestamps();
         });
     }

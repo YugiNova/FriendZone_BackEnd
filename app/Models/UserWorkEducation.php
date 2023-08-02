@@ -17,7 +17,8 @@ class UserWorkEducation extends Model
         'name',
         'type',
         'year_start',
-        "year_end"
+        "year_end",
+        'status'
     ];
 
     public function user() {

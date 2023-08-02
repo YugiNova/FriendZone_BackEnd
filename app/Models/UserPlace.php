@@ -15,7 +15,8 @@ class UserPlace extends Model
     public $fillable = [
         'user_id',
         'name',
-        'type'
+        'type',
+        'status'
     ];
 
     public function user() {
