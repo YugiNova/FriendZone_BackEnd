@@ -19,10 +19,17 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
-use function App\Helper\custom_response;
+use App\MyHelper;
 
 class AuthController extends Controller
 {
+
+    private $hepler;
+    public function __construct(MyHelper $hepler)
+    {
+        $this->hepler = $hepler;
+    }
+
     public function login(LoginRequest $request)
     {
         try {
@@ -36,7 +43,7 @@ class AuthController extends Controller
                 throw new Exception("Email or password was wrong");
             }
 
-            return custom_response("Login successfull",null,$token);
+            return $this->hepler->custom_response("Login successfull",null,$token);
         } catch (\Exception $e) {
             throw new AuthException($e);
         }
@@ -48,7 +55,7 @@ class AuthController extends Controller
             $userDB = User::find($user['id']);
             $userProfile = $userDB->profile;
     
-            return custom_response("User is already login",$userDB);
+            return $this->hepler->custom_response("User is already login",$userDB);
         } catch (\Exception $e) {
             throw new AuthException($e);
         }
@@ -76,7 +83,7 @@ class AuthController extends Controller
             ]);
             $slug = $user->update(['slug'=>$userProfile->id]);
             DB::commit();
-            return custom_response("Register successfull");
+            return $this->hepler->custom_response("Register successfull");
         } catch (\Exception $e) {
             DB::rollback();
             throw new AuthException($e);
@@ -88,7 +95,7 @@ class AuthController extends Controller
         try {
             Auth::logout(true);
 
-            return custom_response("Log out successfull")->withoutCookie('token');
+            return $this->hepler->custom_response("Log out successfull")->withoutCookie('token');
         } catch (\Exception $e) {
             throw new AuthException($e);
         }
@@ -102,7 +109,7 @@ class AuthController extends Controller
             $url = route('auth.email.verify.link', ['id' => $user['id'], 'token' => $token]);
             Mail::to($user['email'])->send(new VerifyEmail($url, $user['display_name']));
 
-            return custom_response("Verify email send successfull");
+            return $this->hepler->custom_response("Verify email send successfull");
         } catch (\Exception $e) {
             throw new AuthException($e);
         }
@@ -132,7 +139,7 @@ class AuthController extends Controller
             if(!$user){
                 throw new Exception("Email not found");
             }
-            return custom_response("Email was found", $user);
+            return $this->hepler->custom_response("Email was found", $user);
         } catch (\Exception $e) {
             throw new AuthException($e);
         }
@@ -170,7 +177,7 @@ class AuthController extends Controller
             $url = route('auth.password.reset.link',['id'=>$user['id'],'token'=>$token]);
             Mail::to($user['email'])->send(new ResetPassword($url, $user['display_name']));
 
-            return custom_response("Send reset password email successfull",$url);
+            return $this->hepler->custom_response("Send reset password email successfull",$url);
         } catch (\Exception $e) {
             throw new AuthException($e);
         }
@@ -235,6 +242,6 @@ class AuthController extends Controller
 
     public function removeCookie(Request $request)
     {
-        return custom_response("Remove user cookie")->withoutCookie('token');
+        return $this->hepler->custom_response("Remove user cookie")->withoutCookie('token');
     }
 }

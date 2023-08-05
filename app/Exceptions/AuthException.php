@@ -23,7 +23,7 @@ class AuthException extends Exception
     public function render()
     {
         if ($this->message == 'Token has expired') {
-            $token = Auth::refresh();
+            $token = Auth::refresh(true);
             return $this->makeErrorResponse($token);
         }
 
