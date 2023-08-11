@@ -10,7 +10,7 @@ class Friendship extends Model
 {
     use HasFactory,HasUuids;
 
-    protected $table="user_work_education";
+    protected $table="friendships";
 
     public $fillable = [
         'user_id',
@@ -23,11 +23,11 @@ class Friendship extends Model
         'updated_at'
     ];
 
-    public function user() {
+    public function sendUser() {    
         return $this->belongsTo(User::class,'user_id');
     }
 
-    public function friend() {
+    public function recieveUser() {    
         return $this->belongsTo(User::class,'friend_id');
     }
 }

@@ -44,6 +44,10 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'role',
+        'created_at',
+        'deleted_at',
+        'updated_at'
     ];
 
     /**
@@ -76,6 +80,8 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         return [];
     }
 
+
+    // User Profile
     public function profile():HasOne{
         return $this->hasOne(UserProfile::class,'user_id');
     }
@@ -90,5 +96,48 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
 
     public function places(){
         return $this->hasMany(UserPlace::class,'user_id');
+    }
+
+    public function friends(){
+        return $this->belongsToMany(User::class,'friendships','user_id','friend_id');
+                    // ->withPivot('status')
+                    // ->withTimestamps();
+    }
+
+
+    // User friendships
+    public function friendsOf(){
+        return $this->belongsToMany(User::class,'friendships','friend_id','user_id')
+                    ->withPivot('status')
+                    ->withTimestamps();
+    }
+
+    public function friendsList(){
+        return $this->friends()->wherePivot('status','friend');
+    }
+
+    public function friendsRequestList(){
+        return $this->friends()->wherePivot('status','request');
+    }
+
+    //User Activities
+    public function posts() {
+        return $this->hasMany(Post::class,'user_id');
+    }
+
+    public function comments(){
+        return $this->hasMany(Comment::class,'user_id');
+    }
+
+    public function reactions(){
+        return $this->hasMany(Reaction::class,'user_id');
+    }
+
+    public function sentNotifications() {
+        return $this->hasMany(Notification::class,'send_id');
+    }
+
+    public function recievedNotifications() {
+        return $this->hasMany(Notification::class,'recieve_id');
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\API\v1\Client\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('user')->name('user.')->middleware(['auth','verified'])->group(function() {
+    Route::get('/',[UserController::class,'getUserList']);
     Route::get('/profile/{slug}',[UserController::class,'getProfile'])->name('profile');
 
     //User

@@ -52,10 +52,9 @@ class AuthController extends Controller
     public function checkLogin(Request $request){
         try {
             $user = Auth::user();
-            $userDB = User::find($user['id']);
-            $userProfile = $userDB->profile;
+            $userProfile = $user->profile;
     
-            return $this->hepler->custom_response("User is already login",$userDB);
+            return $this->hepler->custom_response("User is already login",$user);
         } catch (\Exception $e) {
             throw new AuthException($e);
         }
@@ -73,6 +72,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'avatar_url' => $request->avatar_url ?? null,
+                'slug'=>Str::uuid()->toString(),
                 'status' => 'active',
             ]);
             $userProfile = UserProfile::create([

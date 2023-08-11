@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactRequest;
 use App\Http\Requests\PlaceRequest;
 use App\Http\Requests\WorkEducationRequest;
+use App\Models\Friendship;
 use App\Models\User;
 use App\Models\UserContact;
 use App\Models\UserPlace;
@@ -15,16 +16,41 @@ use App\Models\UserWorkEducation;
 use Exception;
 use Illuminate\Http\Request;
 use App\MyHelper;
+use App\Repository\UserRepository;
 use Cloudinary\Cloudinary;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Pipeline;
 
 class UserController extends Controller
 {
     private $cloudinary;
     private $hepler;
-    public function __construct(Cloudinary $cloudinary, MyHelper $hepler)
+    private $userRepository;
+    public function __construct(Cloudinary $cloudinary, MyHelper $hepler,UserRepository $userRepository)
     {
         $this->cloudinary = $cloudinary;
         $this->hepler = $hepler;
+        $this->userRepository = $userRepository;
+    }
+
+    public function getUserList(Request $request) {
+        try {
+            $userId = $request->query('userId');
+            $status = $request->query('status');
+            if($userId){
+                $users = $this->userRepository->friendsListByUserID($userId);
+            }
+            else if($status){
+                $users = $this->userRepository->ownerFriendshipsByStatus($status);
+            }
+            else{
+                $users = $this->userRepository->all();
+            }
+            return $this->hepler->custom_response("Get user list successfull", $users);
+        } catch (\Exception $e) {
+            throw new UserException($e);
+        }
     }
 
     public function getProfile($slug)
@@ -281,7 +307,7 @@ class UserController extends Controller
                     'required','image',
                     'mimes:jpeg,png',
                     'mimetypes:image/jpeg,image/png',
-                    'max:2048',
+                    'max:2048', 
                 ]
             ]);
 

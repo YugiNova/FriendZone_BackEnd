@@ -21,4 +21,9 @@ use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/api/v1/auth.php';
 require __DIR__.'/api/v1/user.php';
+require __DIR__.'/api/v1/friendship.php';
+require __DIR__.'/api/v1/notification.php';
+require __DIR__.'/api/v1/post.php';
+require __DIR__.'/api/v1/like.php';
+require __DIR__.'/api/v1/comment.php';
 ?>
